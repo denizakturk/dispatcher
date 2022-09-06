@@ -44,7 +44,7 @@ func RequestHandler(inputDoc *model.Document, transaction *model.Transaction) er
 	formString, _ := formToString(inputDoc.Form)
 	(*transaction).SetRequest(formString)
 	documentFormValidater := handling.DocumentFormValidater{Request: formString}
-	reqType := (*transaction).GetRequestType()
+	reqType := (*transaction).GetRequest()
 
 	return documentFormValidater.Validate(reqType)
 }

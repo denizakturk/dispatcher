@@ -3,9 +3,10 @@ package handling
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
+
 	"github.com/denizakturk/dispatcher/constants"
 	"github.com/denizakturk/dispatcher/utilities"
-	"reflect"
 )
 
 type DocumentFormValidater struct {
@@ -15,11 +16,16 @@ type DocumentFormValidater struct {
 func (v *DocumentFormValidater) Validate(TransactionRequestType interface{}) error {
 	var incomingData map[string]interface{}
 	json.Unmarshal([]byte(v.Request), &incomingData)
-	structMap := reflect.ValueOf(TransactionRequestType)
+	var typeof reflect.Type
+	var valueof reflect.Value
+	valueof = reflect.ValueOf(TransactionRequestType)
+	typeof = reflect.TypeOf(TransactionRequestType)
+	if valueof.Kind().String() == "ptr" {
+		valueof = reflect.Indirect(valueof)
+		typeof = valueof.Type()
+	}
 
-	typeof := reflect.TypeOf(TransactionRequestType)
-
-	for i := 0; i < structMap.NumField(); i++ {
+	for i := 0; i < valueof.NumField(); i++ {
 		field := typeof.Field(i)
 		tagOption, _ := utilities.ParseTagToTransactionExchangeTag(string(field.Tag))
 		if tagOption.Require != nil && *tagOption.Require {
@@ -27,7 +33,7 @@ func (v *DocumentFormValidater) Validate(TransactionRequestType interface{}) err
 			if _, ok := incomingData[tagOption.FieldRawname]; !ok {
 				return fmt.Errorf(constants.FIELD_NOT_FOUND, field.Name)
 			}
-			vll := structMap.FieldByName(field.Name)
+			vll := valueof.FieldByName(field.Name)
 			switch vll.Type().Name() {
 			case "string":
 				{

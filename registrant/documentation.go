@@ -1,11 +1,12 @@
 package registrant
 
 import (
+	"encoding/json"
+	"errors"
+
 	"github.com/denizakturk/dispatcher/constants"
 	"github.com/denizakturk/dispatcher/handling"
 	"github.com/denizakturk/dispatcher/model"
-	"encoding/json"
-	"errors"
 )
 
 func NewDocumentation(documentairst *model.Documentarist) *Documentation {
@@ -107,7 +108,7 @@ func (r Documentation) ParameterPasser(transaction *model.Transaction, form mode
 	formString, _ := formToString(form)
 	(*transaction).SetRequest(formString)
 	documentFormValidater := handling.DocumentFormValidater{Request: formString}
-	reqType := (*transaction).GetRequestType()
+	reqType := (*transaction).GetRequest()
 
 	return documentFormValidater.Validate(reqType)
 }
@@ -132,9 +133,10 @@ func (r Documentation) DocumentVerification(inputDoc *model.Document, transactio
 func (r Documentation) TransactionProceduring(transaction *model.Transaction, outputDoc *model.Document) {
 	inputProcedure := &model.Procedure{}
 	outputProcedure := &model.Procedure{}
-	inputProcedure.FromRequestType((*transaction).GetRequestType())
+	inputProcedure.FromRequestType((*transaction).GetRequest())
 	outputProcedure.FromResponseType((*transaction).GetResponse())
 	outputDoc.Output = outputProcedure
+	outputDoc.Procedure = inputProcedure
 	transactionOptions := (*transaction).GetOptions()
 	outputDoc.Options = &transactionOptions
 	outputDoc.Type = constants.DOC_TYPE_PROCEDURE

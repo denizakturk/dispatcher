@@ -41,7 +41,7 @@ func RequestHelper(res http.ResponseWriter, req *http.Request) {
 			if !req.URL.Query().Has("short") || req.URL.Query().Get("short") == "0" {
 				requestProcedure := model.Procedure{}
 				responseProcedure := model.Procedure{}
-				requestProcedure.FromRequestType(v.GetRequestType())
+				requestProcedure.FromRequestType(v.GetRequest())
 				responseProcedure.FromRequestType(v.GetResponse())
 				transaction.Procudure = requestProcedure
 				transaction.Output = responseProcedure

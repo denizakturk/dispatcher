@@ -24,8 +24,6 @@ func (v *DocumentFormValidater) Validate(TransactionRequestType interface{}) err
 		valueof = reflect.Indirect(valueof)
 		typeof = valueof.Type()
 	}
-	fmt.Println("Incoming Data")
-	fmt.Printf("%+v\n", incomingData)
 
 	for i := 0; i < valueof.NumField(); i++ {
 		field := typeof.Field(i)
@@ -36,7 +34,7 @@ func (v *DocumentFormValidater) Validate(TransactionRequestType interface{}) err
 				return fmt.Errorf(constants.FIELD_NOT_FOUND, field.Name)
 			}
 			vll := valueof.FieldByName(field.Name)
-			var val any
+			var val interface{}
 			switch vll.Type().Name() {
 			case "string":
 				{
@@ -45,8 +43,6 @@ func (v *DocumentFormValidater) Validate(TransactionRequestType interface{}) err
 					if v, ok := incomingData[tagOption.FieldRawname]; ok {
 						val = v
 					}
-					fmt.Println("STRING_VALUE")
-					fmt.Println(val)
 					if tagOption.IsEmpty != nil && !*tagOption.IsEmpty && val == "" {
 						return fmt.Errorf(constants.FIELD_CANNOT_BE_EMPTY, field.Name)
 					}
@@ -56,8 +52,6 @@ func (v *DocumentFormValidater) Validate(TransactionRequestType interface{}) err
 					if v, ok := incomingData[tagOption.FieldRawname]; ok {
 						val = v
 					}
-					fmt.Println("NUMBER_VALUE")
-					fmt.Println(val)
 					//val := vll.Interface()
 					if tagOption.IsEmpty != nil && !*tagOption.IsEmpty && val == nil {
 						return fmt.Errorf(constants.FIELD_CANNOT_BE_EMPTY, field.Name)

@@ -24,7 +24,6 @@ func (v *DocumentFormValidater) Validate(TransactionRequestType interface{}) err
 		valueof = reflect.Indirect(valueof)
 		typeof = valueof.Type()
 	}
-
 	for i := 0; i < valueof.NumField(); i++ {
 		field := typeof.Field(i)
 		tagOption, _ := utilities.ParseTagToTransactionExchangeTag(string(field.Tag))
@@ -38,8 +37,6 @@ func (v *DocumentFormValidater) Validate(TransactionRequestType interface{}) err
 			switch vll.Type().Name() {
 			case "string":
 				{
-
-					//val := vll.Interface()
 					if v, ok := incomingData[tagOption.FieldRawname]; ok {
 						val = v
 					}
@@ -52,7 +49,6 @@ func (v *DocumentFormValidater) Validate(TransactionRequestType interface{}) err
 					if v, ok := incomingData[tagOption.FieldRawname]; ok {
 						val = v
 					}
-					//val := vll.Interface()
 					if tagOption.IsEmpty != nil && !*tagOption.IsEmpty && val == nil {
 						return fmt.Errorf(constants.FIELD_CANNOT_BE_EMPTY, field.Name)
 					}

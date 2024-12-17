@@ -1,3 +1,3 @@
-module github.com/denizakturk/dispatcher
+module dispatcher
 
-go 1.21
+go 1.23.4

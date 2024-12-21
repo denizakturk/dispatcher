@@ -52,29 +52,37 @@ func RegisterMainFunc(w http.ResponseWriter, r *http.Request) {
 		WriteErrorDoc(errors.New("dad content type"), w)
 		return
 	}
+	ta := DispatcherHolder.GetTransaction(document.Department, document.Transaction)
+	if ta != nil {
+		outputDoc := (*ta).GetTransaction().Init(document)
 
-	for _, department := range DispatcherHolder {
-		if department.Name == document.Department {
-			for _, v := range department.Transactions {
-				if v.GetName() == document.Transaction {
-					outputDoc := v.GetTransaction().Init(document)
+		response, err := json.Marshal(outputDoc)
+		if err != nil {
+			WriteErrorDoc(errors.New("dad content type"), w)
+			return
+		}
 
-					response, err := json.Marshal(outputDoc)
-					if err != nil {
-						WriteErrorDoc(errors.New("dad content type"), w)
-						return
+		if document.Dispatchings != nil {
+			for _, v := range document.Dispatchings {
+				cta := DispatcherHolder.GetTransaction(v.Department, v.Transaction)
+				if cta != nil {
+					dOutputDoc := (*cta).GetTransaction().Init(*v)
+					outputDoc.Dispatchings = append(outputDoc.Dispatchings, &dOutputDoc)
+					// if Ignored errors add dispatching ignoredError option params in model.document
+					if dOutputDoc.Error != nil {
+						break
 					}
-					options := v.GetTransaction().GetOptions()
-					if &options != nil {
-						for key, _ := range options.Header {
-							w.Header().Set(key, options.Header.Get(key))
-						}
-					}
-					fmt.Fprint(w, string(response))
-					return
 				}
 			}
 		}
+		options := (*ta).GetTransaction().GetOptions()
+		if &options != nil {
+			for key, _ := range options.Header {
+				w.Header().Set(key, options.Header.Get(key))
+			}
+		}
+		fmt.Fprint(w, string(response))
+		return
 	}
 	outputDoc := model.Document{Department: document.Department, Transaction: document.Transaction, Error: errors.New("transaction not found")}
 	w.WriteHeader(http.StatusBadRequest)

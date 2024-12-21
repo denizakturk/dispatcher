@@ -39,8 +39,7 @@ func (db *DispacherBucket) GetTransaction(departmentName, transactionName string
 		if val.Name == departmentName {
 			for _, v := range val.Transactions {
 				for v.GetName() == transactionName {
-					tmpT := v
-					return &tmpT
+					return &v
 				}
 			}
 		}

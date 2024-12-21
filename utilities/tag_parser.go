@@ -3,7 +3,7 @@ package utilities
 import (
 	"strings"
 
-	"dispatcher/constants"
+	"github.com/denizakturk/dispatcher/constants"
 )
 
 type TransactionExchangeTag struct {

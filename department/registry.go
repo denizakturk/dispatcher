@@ -1,10 +1,10 @@
 package department
 
 import (
-	"dispatcher/model"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/denizakturk/dispatcher/model"
 	"io"
 	"net/http"
 )
@@ -38,7 +38,12 @@ func RegisterMainFunc(w http.ResponseWriter, r *http.Request) {
 						w.WriteHeader(http.StatusBadRequest)
 						return
 					}
-
+					options := v.GetTransaction().GetOptions()
+					if &options != nil {
+						for key, _ := range options.Header {
+							w.Header().Set(key, options.Header.Get(key))
+						}
+					}
 					fmt.Fprint(w, string(response))
 					return
 				}

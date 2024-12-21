@@ -1,10 +1,10 @@
 package model
 
 import (
-	"dispatcher/constants"
-	"dispatcher/utilities"
 	"encoding/json"
 	"fmt"
+	"github.com/denizakturk/dispatcher/constants"
+	"github.com/denizakturk/dispatcher/utilities"
 	"reflect"
 )
 

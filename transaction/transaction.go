@@ -1,7 +1,7 @@
 package transaction
 
 import (
-	"dispatcher/model"
+	"github.com/denizakturk/dispatcher/model"
 )
 
 type Transaction[T any] interface {
